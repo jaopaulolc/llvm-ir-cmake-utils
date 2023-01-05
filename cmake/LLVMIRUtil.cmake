@@ -176,9 +176,13 @@ function(llvmir_attach_bc_target)
     endif()
 
     get_filename_component(OUTFILE ${IN_FILE} NAME)
+    get_filename_component(IN_FILE_DIR ${IN_FILE} DIRECTORY)
+    get_filename_component(OUT_DIR_NAME ${IN_FILE_DIR} NAME)
     get_filename_component(INFILE ${IN_FILE} ABSOLUTE)
+    set(OUT_DIR "${WORK_DIR}/${OUT_DIR_NAME}")
+    file(MAKE_DIRECTORY "${OUT_DIR}")
     set(OUT_LLVMIR_FILE "${OUTFILE}.${LLVMIR_BINARY_FMT_SUFFIX}")
-    set(FULL_OUT_LLVMIR_FILE "${WORK_DIR}/${OUT_LLVMIR_FILE}")
+    set(FULL_OUT_LLVMIR_FILE "${OUT_DIR}/${OUT_LLVMIR_FILE}")
 
     # compile definitions per source file
     llvmir_extract_compile_defs_properties(IN_FILE_DEFS ${IN_FILE})
@@ -416,10 +420,14 @@ function(llvmir_attach_disassemble_target)
   file(MAKE_DIRECTORY ${WORK_DIR})
 
   foreach(IN_LLVMIR_FILE ${IN_LLVMIR_FILES})
-    get_filename_component(OUTFILE ${IN_LLVMIR_FILE} NAME_WE)
+    get_filename_component(OUTFILE ${IN_LLVMIR_FILE} NAME_WLE)
     set(INFILE "${IN_LLVMIR_DIR}/${IN_LLVMIR_FILE}")
+    get_filename_component(IN_FILE_DIR ${INFILE} DIRECTORY)
+    get_filename_component(OUT_DIR_NAME ${IN_FILE_DIR} NAME)
+    set(OUT_DIR "${WORK_DIR}/${OUT_DIR_NAME}")
+    file(MAKE_DIRECTORY "${OUT_DIR}")
     set(OUT_LLVMIR_FILE "${OUTFILE}.${LLVMIR_TEXT_FMT_SUFFIX}")
-    set(FULL_OUT_LLVMIR_FILE "${WORK_DIR}/${OUT_LLVMIR_FILE}")
+    set(FULL_OUT_LLVMIR_FILE "${OUT_DIR}/${OUT_LLVMIR_FILE}")
 
     add_custom_command(OUTPUT ${FULL_OUT_LLVMIR_FILE}
       COMMAND ${LLVMIR_DISASSEMBLER}
